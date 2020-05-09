@@ -2,12 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import YT from './components/YT';
+import YTWrap from './components/YTWrap';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
-    <YT />
+    <YTWrap />
   </React.StrictMode>,
   document.getElementById('root')
 );

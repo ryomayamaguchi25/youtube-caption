@@ -21,6 +21,7 @@ const Search = (props) => {
     <form className="search">
       <input
         value={searchValue}
+        // value='https://www.youtube.com/watch?v=_F7iIkHF4u8'
         onChange={handleSearchInputChanges}
         type="text"
       />

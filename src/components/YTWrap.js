@@ -41,7 +41,7 @@ export default function YTWrap() {
           var textList = [...scriptDoc.getElementsByTagName("text")].map((text, i) => {
             const start = text.getAttribute('start')
             const dur = text.getAttribute('dur')
-            const caption = text.innerHTML
+            const caption = text.textContent.replace(/(&lt;)/g, '<').replace(/(&gt;)/g, '>').replace(/(&quot;)/g, '"').replace(/(&#39;)/g, "'").replace(/(&amp;)/g, '&');
             return { start: start, dur: dur, caption: caption }
           }
           );
@@ -82,6 +82,7 @@ export default function YTWrap() {
   const getVideoId = (url) => {//Get VIDEO ID from SEARCH component 
     try {
       //エラー出るかもしれないけど実行したい処理  
+      url = 'https://www.youtube.com/watch?v=_F7iIkHF4u8'
       var seperateURL = url.split('v=')[1].split('&')[0];
       setVideoId(seperateURL);
       getCaptionOpt(seperateURL);

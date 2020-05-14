@@ -7,7 +7,8 @@ export default function VideoFrame(props) {
   const id = props.videoId;
   const script1 = props.script1;
   const script2 = props.script2;
-  const [time, setTime] = useState(0);
+  // const [time, setTime] = useState(0);
+  const timeRef = useRef(0)
   const scriptExist = script1 && script2 ? true : false;
   const [displayText1, setDisplayText1] = useState('Lamguage1');
   const [displayText2, setDisplayText2] = useState('Language2');
@@ -28,11 +29,11 @@ export default function VideoFrame(props) {
         var time = event.target.getCurrentTime();
         var time = Math.floor(time * 100) / 100;
         if (isPlay.current) {
-          setTime(time)
+          timeRef.current = time
           timer = setTimeout(coreFunc, 100);
         } else {
           clearTimeout(timer)
-          setTime(time)
+          timeRef.current = time
         }
       }
       console.log('getTime')
@@ -73,10 +74,11 @@ export default function VideoFrame(props) {
   }
   useEffect(
     () => {
-      getScript1(time)
-      getScript2(time)
+      console.log(timeRef.current)
+      getScript1(timeRef.current)
+      getScript2(timeRef.current)
     }
-    , [time])
+    , [timeRef.current])
 
   const asyncSeekTo = (newTime) => {
     return new Promise((resolve, reject) => {
@@ -85,18 +87,18 @@ export default function VideoFrame(props) {
   }
 
   const playBackBtn = (sec) => {
-    const newTime = (time - sec)
+    const newTime = (timeRef.curren - sec)
     asyncSeekTo(newTime).then(
       () => {
         const getOriginal = event.target.getCurrentTime();
-        setTime(getOriginal)
+        timeRef.current = getOriginal
       }
 
     )
   }
   const playForwardBtn = (sec) => {
-    setTime(t => (t + sec))
-    event.target.seekTo(time);
+    timeRef.current = timeRef.current + sec
+    event.target.seekTo(timeRef.current);
   }
 
 
@@ -148,7 +150,7 @@ export default function VideoFrame(props) {
       {!props.isIdError && (
         <YouTube id='video' videoId={id} onStateChange={getTime} onReady={_onReady} ></YouTube>
       )}
-      {time}
+      {timeRef.current}
       {!(event == null) &&
         <PlayContBtn></PlayContBtn>
       }

@@ -7,8 +7,7 @@ export default function VideoFrame(props) {
   const id = props.videoId;
   const script1 = props.script1;
   const script2 = props.script2;
-  // const [time, setTime] = useState(0);
-  const timeRef = useRef(0)
+  const [time, setTime] = useState(0);
   const scriptExist = script1 && script2 ? true : false;
   const [displayText1, setDisplayText1] = useState('Lamguage1');
   const [displayText2, setDisplayText2] = useState('Language2');
@@ -29,11 +28,11 @@ export default function VideoFrame(props) {
         var time = event.target.getCurrentTime();
         var time = Math.floor(time * 100) / 100;
         if (isPlay.current) {
-          timeRef.current = time
+          setTime(time)
           timer = setTimeout(coreFunc, 100);
         } else {
           clearTimeout(timer)
-          timeRef.current = time
+          setTime(time)
         }
       }
       console.log('getTime')
@@ -74,31 +73,25 @@ export default function VideoFrame(props) {
   }
   useEffect(
     () => {
-      console.log(timeRef.current)
-      getScript1(timeRef.current)
-      getScript2(timeRef.current)
+      getScript1(time)
+      getScript2(time)
     }
-    , [timeRef.current])
-
-  const asyncSeekTo = (newTime) => {
-    return new Promise((resolve, reject) => {
-      event.target.seekTo(newTime);
-    })
-  }
+    , [time])
 
   const playBackBtn = (sec) => {
-    const newTime = (timeRef.curren - sec)
-    asyncSeekTo(newTime).then(
-      () => {
-        const getOriginal = event.target.getCurrentTime();
-        timeRef.current = getOriginal
-      }
-
-    )
+    let newTime = (time - sec)
+    if (newTime < 0) {
+      newTime = 0
+    }
+    event.target.seekTo(newTime);
+    // const getOriginal = event.target.getCurrentTime();
+    setTime(newTime)
   }
   const playForwardBtn = (sec) => {
-    timeRef.current = timeRef.current + sec
-    event.target.seekTo(timeRef.current);
+    const newTime = time + sec
+    event.target.seekTo(newTime);
+    // const getOriginal = event.target.getCurrentTime();
+    setTime(newTime)
   }
 
 
@@ -118,30 +111,34 @@ export default function VideoFrame(props) {
     )
   }
 
+  // useEffect(() => {
+  //   const handleKeydown = (e) => {
+  //     console.log('down')
+  //     console.log('DOWNNNNN ; ' + time)
+  //     if (event == null) { return }
+  //     if (e.keyCode == 32) {
+  //       if (isPlay.current == true) {
+  //         console.log('I will stop')
+  //         event.target.pauseVideo()
+  //         return
+  //       } else {
+  //         console.log('I will start')
+  //         event.target.playVideo()
+  //         return
+  //       }
+  //     }
+  //     if (e.keyCode == 37) {
+  //       console.log('BACKKKKKKKK ; ' + time)
 
-  useEffect(() => {
-    const handleKeydown = (e) => {
-      if (event == null) { return }
-      if (e.keyCode == 32) {
-        if (isPlay.current == true) {
-          console.log('I will stop')
-          event.target.pauseVideo()
-          return
-        } else {
-          console.log('I will start')
-          event.target.playVideo()
-          return
-        }
-      }
-      if (e.keyCode == 37) {
-        playBackBtn(5)
-      }
-      if (e.keyCode == 39) {
-        playForwardBtn(5)
-      }
-    }
-    window.addEventListener("keydown", handleKeydown);
-  }, [event])
+  //       playBackBtn(5)
+  //     }
+  //     if (e.keyCode == 39) {
+  //       playForwardBtn(5)
+  //     }
+  //   }
+  // }, [])
+  // window.addEventListener("keydown", handleKeydown)
+
 
 
   return (
@@ -150,7 +147,7 @@ export default function VideoFrame(props) {
       {!props.isIdError && (
         <YouTube id='video' videoId={id} onStateChange={getTime} onReady={_onReady} ></YouTube>
       )}
-      {timeRef.current}
+      {time}
       {!(event == null) &&
         <PlayContBtn></PlayContBtn>
       }

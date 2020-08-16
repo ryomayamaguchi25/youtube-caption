@@ -3,11 +3,15 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import YTWrap from './components/YTWrap';
+import Database from './components/Database';
+import Auth from './components/Auth';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
+    {/* <div className='AuthWrap'><Auth /></div> */}
     <YTWrap />
+    <Database />
   </React.StrictMode>,
   document.getElementById('root')
 );

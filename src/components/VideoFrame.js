@@ -2,11 +2,23 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import YouTube from 'react-youtube';
 import { playButton, stopButton } from './playerButFunc'
+import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
+
+import Forward5Icon from '@material-ui/icons/Forward5';
+import Forward10Icon from '@material-ui/icons/Forward10';
+import Forward30Icon from '@material-ui/icons/Forward30';
+import Replay5Icon from '@material-ui/icons/Replay5';
+import Replay10Icon from '@material-ui/icons/Replay10';
+import Replay30Icon from '@material-ui/icons/Replay30';
+
 
 export default function VideoFrame(props) {
   const id = props.videoId;
   const script1 = props.script1;
   const script2 = props.script2;
+  const isError = props.isIdError;
   const [time, setTime] = useState(0);
   const scriptExist = script1 && script2 ? true : false;
   const [displayText1, setDisplayText1] = useState('Lamguage1');
@@ -84,7 +96,14 @@ export default function VideoFrame(props) {
       newTime = 0
     }
     event.target.seekTo(newTime);
-    // const getOriginal = event.target.getCurrentTime();
+    setTime(newTime)
+  }
+  const playBackBtnTest = (sec) => {
+    let newTime = (time - sec)
+    if (newTime < 0) {
+      newTime = 0
+    }
+    this.event.target.seekTo(newTime);
     setTime(newTime)
   }
   const playForwardBtn = (sec) => {
@@ -95,21 +114,62 @@ export default function VideoFrame(props) {
   }
 
 
-  const PlayContBtn = () => {
-    return (
-      <div>
-        <button onClick={() => playBackBtn(15)}>＜＜＜　</button>
-        <button onClick={() => playBackBtn(10)}>＜＜　</button>
-        <button onClick={() => playBackBtn(5)}>＜</button>
-        {isPlay.current ?
-          <button onClick={() => stopButton(event)}>停止</button> :
-          <button onClick={() => playButton(event)}>再生</button>}
-        <button onClick={() => playForwardBtn(5)}>＞</button>
-        <button onClick={() => playForwardBtn(10)}>＞＞　</button>
-        <button onClick={() => playForwardBtn(15)}>＞＞＞　</button>
-      </div>
-    )
-  }
+  const PlayContBtn = React.memo(
+    () => {
+      return (
+        <div>
+          <Tooltip title='-30sec'>
+            <Button onClick={() => playBackBtn(30)}>
+              <Replay30Icon fontSize="large" />
+            </Button>
+          </Tooltip>
+          <Tooltip title='-10sec'>
+            <Button onClick={() => playBackBtn(10)}>
+              <Replay10Icon fontSize="large" />
+
+            </Button>
+          </Tooltip>
+          <Tooltip title='-5sec'>
+            <Button onClick={() => playBackBtn(5)}>
+              <Replay5Icon fontSize="large" />
+            </Button>
+          </Tooltip>
+
+          {isPlay.current ?
+            <Button onClick={() => stopButton(event)}>STOP</Button>
+
+            :
+
+            <Button onClick={() => playButton(event)}>PLAY</Button>}
+
+
+          <Tooltip title='+5sec'>
+            <Button onClick={() => playForwardBtn(5)}>
+              <Forward5Icon fontSize="large"></Forward5Icon>
+            </Button>
+          </Tooltip>
+          <Tooltip title='+10sec'>
+            <Button onClick={() => playForwardBtn(10)}>
+              <Forward10Icon fontSize="large"></Forward10Icon>
+
+            </Button>
+          </Tooltip>
+          <Tooltip title='+30sec'>
+            <Button onClick={() => playForwardBtn(30)}>
+              <Forward30Icon fontSize="large"></Forward30Icon>
+
+            </Button>
+          </Tooltip>
+
+
+
+
+
+        </div>
+      )
+    }
+
+  )
 
   // useEffect(() => {
   //   const handleKeydown = (e) => {
@@ -138,21 +198,35 @@ export default function VideoFrame(props) {
   //   }
   // }, [])
   // window.addEventListener("keydown", handleKeydown)
+  const playerContent = () => {
+    return (
+      <Box display='flex' alignItems='center' flexDirection='column'>
+        <YouTube id='video' videoId={id} onStateChange={getTime} onReady={_onReady} ></YouTube>
+        {/* VideoID:{id} */}
+        {/* {time} */}
 
+        {!(event == null) &&
+          <PlayContBtn></PlayContBtn>
+        }
+        <div>{displayText1}</div>
+        <div>{displayText2}</div>
+      </Box>
+    )
+  }
 
-
+  const Test = useCallback(
+    () => { console.log(123); return <Button onClick={() => playBackBtnTest(10)}>test</Button> }
+    , []);
+  const Test2 =
+    () => { return <Button onClick={() => playBackBtn(10)}>test</Button> }
+    ;
   return (
     <React.Fragment>
-      <div>{id}</div>
-      {!props.isIdError && (
-        <YouTube id='video' videoId={id} onStateChange={getTime} onReady={_onReady} ></YouTube>
+      <Test />
+      {(props.isIdError == false) && (
+        playerContent()
       )}
-      {time}
-      {!(event == null) &&
-        <PlayContBtn></PlayContBtn>
-      }
-      <div>{displayText1}</div>
-      <div>{displayText2}</div>
+
     </React.Fragment>
   )
 }

@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import YouTube from 'react-youtube';
+import Subtitles from './Subtitles';
 import { playButton, stopButton } from './playerButFunc'
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
@@ -114,62 +115,6 @@ export default function VideoFrame(props) {
   }
 
 
-  const PlayContBtn = React.memo(
-    () => {
-      return (
-        <div>
-          <Tooltip title='-30sec'>
-            <Button onClick={() => playBackBtn(30)}>
-              <Replay30Icon fontSize="large" />
-            </Button>
-          </Tooltip>
-          <Tooltip title='-10sec'>
-            <Button onClick={() => playBackBtn(10)}>
-              <Replay10Icon fontSize="large" />
-
-            </Button>
-          </Tooltip>
-          <Tooltip title='-5sec'>
-            <Button onClick={() => playBackBtn(5)}>
-              <Replay5Icon fontSize="large" />
-            </Button>
-          </Tooltip>
-
-          {isPlay.current ?
-            <Button onClick={() => stopButton(event)}>STOP</Button>
-
-            :
-
-            <Button onClick={() => playButton(event)}>PLAY</Button>}
-
-
-          <Tooltip title='+5sec'>
-            <Button onClick={() => playForwardBtn(5)}>
-              <Forward5Icon fontSize="large"></Forward5Icon>
-            </Button>
-          </Tooltip>
-          <Tooltip title='+10sec'>
-            <Button onClick={() => playForwardBtn(10)}>
-              <Forward10Icon fontSize="large"></Forward10Icon>
-
-            </Button>
-          </Tooltip>
-          <Tooltip title='+30sec'>
-            <Button onClick={() => playForwardBtn(30)}>
-              <Forward30Icon fontSize="large"></Forward30Icon>
-
-            </Button>
-          </Tooltip>
-
-
-
-
-
-        </div>
-      )
-    }
-
-  )
 
   // useEffect(() => {
   //   const handleKeydown = (e) => {
@@ -206,27 +151,82 @@ export default function VideoFrame(props) {
         {/* {time} */}
 
         {!(event == null) &&
-          <PlayContBtn></PlayContBtn>
+          <PlayContBtn event={event} isPlay={isPlay} playForwardBtn={playForwardBtn} playBackBtn={playBackBtn}></PlayContBtn>
         }
-        <div>{displayText1}</div>
-        <div>{displayText2}</div>
+        <Subtitles subtitle1={displayText1} subtitle2={displayText2}></Subtitles>
       </Box>
     )
   }
 
-  const Test = useCallback(
-    () => { console.log(123); return <Button onClick={() => playBackBtnTest(10)}>test</Button> }
-    , []);
-  const Test2 =
-    () => { return <Button onClick={() => playBackBtn(10)}>test</Button> }
-    ;
+  // const Test = () => {
+  //   return (
+  //     <div>
+  //       aaaa
+  //     </div>
+  //   )
+  // };
   return (
     <React.Fragment>
-      <Test />
       {(props.isIdError == false) && (
         playerContent()
       )}
 
     </React.Fragment>
+  )
+}
+
+
+
+const PlayContBtn = (props) => {
+  return (
+    <div>
+      <Tooltip title='-30sec'>
+        <Button onClick={() => props.playBackBtn(30)}>
+          <Replay30Icon fontSize="large" />
+        </Button>
+      </Tooltip>
+      <Tooltip title='-10sec'>
+        <Button onClick={() => props.playBackBtn(10)}>
+          <Replay10Icon fontSize="large" />
+
+        </Button>
+      </Tooltip>
+      <Tooltip title='-5sec'>
+        <Button onClick={() => props.playBackBtn(5)}>
+          <Replay5Icon fontSize="large" />
+        </Button>
+      </Tooltip>
+
+      {props.isPlay.current ?
+        <Button onClick={() => stopButton(props.event)}>STOP</Button>
+
+        :
+
+        <Button onClick={() => playButton(props.event)}>PLAY</Button>}
+
+
+      <Tooltip title='+5sec'>
+        <Button onClick={() => props.playForwardBtn(5)}>
+          <Forward5Icon fontSize="large"></Forward5Icon>
+        </Button>
+      </Tooltip>
+      <Tooltip title='+10sec'>
+        <Button onClick={() => props.playForwardBtn(10)}>
+          <Forward10Icon fontSize="large"></Forward10Icon>
+
+        </Button>
+      </Tooltip>
+      <Tooltip title='+30sec'>
+        <Button onClick={() => props.playForwardBtn(30)}>
+          <Forward30Icon fontSize="large"></Forward30Icon>
+
+        </Button>
+      </Tooltip>
+
+
+
+
+
+    </div>
   )
 }
